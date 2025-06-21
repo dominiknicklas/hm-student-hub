@@ -1,0 +1,30 @@
+services:
+  python:
+    container_name: student-hub-python
+    build:
+      context: ./student_hub
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    networks:
+      - student-hub
+    volumes:
+      - student_hub_data:/app
+  
+  frontend:
+    container_name: student-hub-frontend
+    build:
+      context: ./student_hub_frontend
+    ports:
+      - "5173:5173"
+    restart: unless-stopped
+    networks:
+      - student-hub
+    command: [ "npm", "run", "dev", "--", "--host" ]
+
+networks:
+  student-hub:
+    external: false
+
+volumes:
+  student_hub_data:

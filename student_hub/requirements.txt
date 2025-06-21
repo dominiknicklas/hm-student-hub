@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+ics
+arrow
+pdfplumber
+tensorflow
+numpy
+bcrypt
+requests
+pandas
+beautifulsoup4
+pydantic
+pydantic[email]
+python-multipart
