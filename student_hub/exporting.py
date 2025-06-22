@@ -3,7 +3,7 @@ from ics.grammar.parse import ContentLine
 from datetime import date
 from datetime import datetime, timedelta
 import arrow
-from student_hub import profile_storing
+from student_hub.profile_storing import get_lectures_for_profile
 
 # Map weekday string to weekday number
 weekday_map = {
@@ -30,7 +30,7 @@ def get_ics_file_for_user_timetable(email):
     """
 
     # Retrieve lectures for the given profile
-    lectures = profile_storing.get_lectures_for_profile(email)
+    lectures = get_lectures_for_profile(email)
 
     calendar = Calendar()
 

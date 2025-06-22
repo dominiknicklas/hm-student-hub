@@ -11,5 +11,6 @@ pandas
 beautifulsoup4
 pydantic
 pydantic[email]
+certifi
 python-multipart
 apscheduler

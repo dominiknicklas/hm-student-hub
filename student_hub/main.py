@@ -1,21 +1,17 @@
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-
 from fastapi import FastAPI, Query, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import status
 from fastapi.responses import StreamingResponse
 import pdfplumber
 import io
-import scraping
-import profile_storing
-import rating_storing
-from util_classes import *
-from util_functions import extract_data_from_transcript_text, extract_suiting_exams_for_student
-from predicting import is_toxic, load_model_and_vectorizer
-from exporting import get_ics_file_for_user_timetable
-from mailing import find_and_send_exam_reminders
+import student_hub.scraping as scraping
+import student_hub.profile_storing as profile_storing
+import student_hub.rating_storing as rating_storing
+from student_hub.util_classes import *
+from student_hub.util_functions import extract_data_from_transcript_text, extract_suiting_exams_for_student
+from student_hub.predicting import is_toxic, load_model_and_vectorizer
+from student_hub.exporting import get_ics_file_for_user_timetable
+from student_hub.mailing import find_and_send_exam_reminders
 from contextlib import asynccontextmanager
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -155,4 +151,4 @@ async def get_all_ratings_for_professor(prof_id: str = Query(...)):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("student_hub.main:app", host="0.0.0.0", port=8000, reload=True)

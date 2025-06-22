@@ -1,4 +1,5 @@
 import pytest
+from datetime import datetime
 from student_hub.mailing import find_and_send_exam_reminders, send_exam_reminder_email
 
 def test_find_and_send_exam_reminders(mocker):
@@ -51,7 +52,7 @@ def test_email_content_printed(mocker):
         "taker_email": "student@example.com",
         "taker_name": "Student Tester",
         "exam_name": "Algorithmen und Datenstrukturen",
-        "exam_date": "2025-07-21T16:30:00",
+        "exam_date": datetime.fromisoformat("2025-07-21T16:30:00"),
     }
 
     # Mock the print function to capture printed output and the SMTP_SSL call

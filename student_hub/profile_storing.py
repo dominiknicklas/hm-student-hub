@@ -1,6 +1,7 @@
 import sqlite3
 from datetime import datetime, timedelta
 import bcrypt
+from zoneinfo import ZoneInfo
 
 DB_NAME = "studenthub.db"
 

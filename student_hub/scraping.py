@@ -165,25 +165,38 @@ def scrape_all_exams():
 
     exam_form = soup.find('form', {'id': 'form_exam_plan'})
     h2 = exam_form.find('h2')
+
     if h2 and 'Die Prüfungsplanung' in h2.text and 'ist noch nicht abgeschlossen' in h2.text:
         return []
     else:
         exams = []
-        exam_table = exam_form.find('table')
-        rows = exam_table.find_all('tr')
-        for row in rows[2:]: # Skip header row
-            cells = row.find_all('td')
-            if len(cells) > 1:
-                exam_name = cells[1].get_text(strip=True)
-                study_groups = cells[2].get_text(strip=True)
-                examiner = cells[3].get_text(strip=True)
-                exam_date = cells[4].get_text(strip=True)
-                extracted_date = extract_exam_date(exam_date)
 
-                exams.append({
+        # Locate the HTML table containing exam information
+        exam_table = exam_form.find('table')
+        exam_table_body = exam_table.find('tbody')
+        # Each top-level row corresponds to one exam entry
+        for row in exam_table_body.find_all('tr'):
+            cells = row.find_all('td')
+
+            # Rows with fewer than 5 cells usually belong to nested tables (e.g. room details)
+            # -> Skip these rows as they don't represent complete exam data
+            if len(cells) < 5:
+                continue
+
+            # Extract exam details from the relevant columns
+            exam_name = cells[1].get_text(strip=True)
+            study_groups = cells[2].get_text(strip=True)
+            examiner = cells[3].get_text(strip=True)
+            exam_date = cells[4].get_text(strip=True)
+
+            # Convert the exam date string to a datetime object
+            extracted_date = extract_exam_date(exam_date)
+
+            exams.append({
                     'examName': exam_name,
                     'studyGroups': study_groups,
                     'examiner': examiner,
                     'examDate': extracted_date
                 })
+
         return exams

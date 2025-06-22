@@ -1,75 +1,101 @@
-# Student Hub FK07
+# 🎓 Student Hub FK07
 
-## 🎓 Purpose of the Application
+## 🔍 Ziel der Anwendung
 
-**Student Hub FK07** is a fullstack information system for students of the Computer Science and Mathematics faculty (FK07) at Hochschule München. It's developed using a React + TypeScript frontend, a Python backend (FastAPI), and an SQLite database.
-
-The application allows students to:
-- Register a personal profile
-- Upload their official transcript of records
-- Automatically extract and visualize academic data (grades, average grade, ECTS, etc.)
-- Retrieve and display their current timetable based on their study group
-- Update their study group and academic record to reflect the current semester
-- Rate professors of the faculty -> therefore a self-trained machine learning model is used to detect toxic language in professor reviews, allowing only respectful feedback to be published.
-
-To ensure up-to-date information, the system scrapes data from the public pages of the [ZPA](https://zpa.cs.hm.edu/public/) and [FK07 professor page](https://cs.hm.edu/fakultaet/personen/professuren.de.html) to fetch:
-- Available study groups
-- All lectures of a particular study group
-- Professor details
+**Student Hub FK07** ist ein webbasiertes Informationssystem für Studierende der Fakultät für Informatik und Mathematik (FK07) an der Hochschule München.  
+Ziel ist es, alle studienrelevanten Informationen zentral und übersichtlich bereitzustellen sowie den Studierenden die Möglichkeit zu bieten, eigene Erfahrungen mit Professor:innen öffentlich zu teilen.
+Im Gegensatz zur derzeit ausschließlich intern zugänglichen Evaluation sind diese Bewertungen für alle Studierenden einsehbar.
 
 
+## ✨ Hauptfunktionen
+
+Die Anwendung basiert auf einem **React + TypeScript Frontend** und einem **FastAPI + SQLite Backend**. Sie unterstützt die digitale Studienorganisation durch folgende Funktionen:
+
+- 🧑‍🎓 Anlegen eines **persönlichen Profils**
+- 📄 **PDF-Notenblatt hochladen** und automatisch analysieren (Noten, ECTS, Durchschnittsnote)
+- 📅 **Stundenpläne und Prüfungstermine** abrufen – je nach gewählter Studiengruppe
+- 📧 **E-Mail-Benachrichtigung** über bevorstehende Prüfungen (7 Tage im Voraus)
+- 📊 Visualisierung des **Studienfortschritts**
+- ⭐ **Professoren bewerten** – ein selbst trainiertes **Machine-Learning-Modell** erkennt toxische Sprache und filtert unpassende Bewertungen
+- 🔍 **Scraping aktueller Daten** von:
+  - der [ZPA-Seite](https://zpa.cs.hm.edu/public/) (Studiengruppen, Vorlesungen, Prüfungen)
+  - der [FK07-Professurenseite](https://cs.hm.edu/fakultaet/personen/professuren.de.html) (Professorendetails)
 
 
-## 🚀 How to Start the Application
+## 🚀 Starten der Anwendung
 
-You can run the application locally in two ways:
+### ⚙️ Voraussetzungen
 
-### Option 1: Manually
-Start a terminal window in the root folder of the project
+- `npm` und `Python` müssen auf dem System installiert sein  
+  - Empfohlen wird **Python 3.12**, da neuere Versionen unter Umständen nicht mit TensorFlow kompatibel sind.
+
+- Das **ML-Modell für die Bewertungstexte** wird **nicht mitgeliefert**, da es zu groß ist.  
+  → Vor dem Start der Anwendung muss das Modell eigenständig trainiert und gespeichert werden.  
+  Dafür ist das **Jupyter-Notebook** unter `/student_hub/model_training` von oben bis unten einmal vollständig auszuführen.
+
+- *(Optional)*: Der **E-Mail-Versand** ist standardmäßig deaktiviert, um keine privaten Zugangsdaten in der Anwendung zu speichern.  
+  Statt einer tatsächlichen E-Mail wird der Inhalt lediglich in der Konsole ausgegeben.  
+  → Wer reale E-Mails versenden möchte, muss einen eigenen SMTP-Server bzw. Absender konfigurieren.  
+  Die entsprechenden Einstellungen können in `/student_hub/mailing.py` innerhalb der Funktion `send_exam_reminder_email` an den gekennzeichneten Stellen vorgenommen werden.
+
+
+### Startup
+
+**Backend Setup:** Ein neues Terminal öffnen und in das Root Verzeichnis des Projekts wechseln (Projekt-Root: `/student_hub`)
 
 ```bash
-# 1. Backend setup
-cd student_hub
-pip install -r requirements.txt
-python3 main.py
+pip3 install -r student_hub/requirements.txt
+python3 -m student_hub.main
+```
 
-# 2. Frontend setup 
-cd ../student_hub_frontend
+
+**Frontend Setup:** Ein neues Terminal öffnen und in das Root Verzeichnis des Projekts wechseln
+```bash
+cd student_hub_frontend
 npm install
 npm run dev
 ```
 
-### Option 2: with Docker
-Start a terminal window in the root folder of the project and insure that the docker engine is running
+---
 
-Execute: `docker compose up --build`
+## 🖥️ Nutzung der Anwendung
 
-This will automaticly start the pyhton 'backend' and react frontend in containers
+### Zugriff auf die Anwendung
 
+- Sobald die Anwendung läuft, öffne im Browser: [http://localhost:5173](http://localhost:5173)
+- Du landest auf dem Startbildschirm, auf dem du dich registrieren oder einloggen kannst.
 
-## 🖥️ How to use the Application
-### Accessing the Application
+### Registrierung
 
-- When the app is running, open your browser and go to: [http://localhost:5173](http://localhost:5173)
-- You will land on the welcome screen where you can log in or register.
+1. Persönliche Daten eingeben  
+2. Gültigen offiziellen Leistungsnachweis (PDF) hochladen  
+3. Aktuelle Studiengruppe auswählen → basierend darauf werden automatisch die zugehörigen Kurse ermittelt
 
-**Registration:**
-1. Enter personal information  
-2. Upload a valid official transcript of records (PDF)  
-3. Select the courses you are currently attending (fetched based on your selected study group)
+---
 
+### Funktionen nach dem Login
 
-### Features After Logging In
+- Übersicht über den Studienverlauf: Noten, Durchschnittsnote, gesamter ECTS-Stand
+- Persönlichen Stundenplan anzeigen und als Kalenderdatei exportieren
+- Leistungsnachweis und Studiengruppe jederzeit aktualisieren
+- Professor:innen suchen und bewerten
 
-- View your academic progress: Grades, Average grade, Total ECTS (study progress)
-- View and download your personal timetable (importable into calendar apps)
-- Update your transcript and study group information
-- Search for professors and submit reviews
+---
 
+### Bewertungssystem für Professor:innen
 
-### Professor Review System
+- Über die Suchfunktion kann jede:r Professor:in der FK07 aufgerufen werden (inkl. „Max Mustermann“ als Testprofil)
+- Auf dem Profil sind bestehende Bewertungen anderer Studierender sichtbar
+- Eigene Bewertungen können abgegeben werden
+  - Ein selbst trainiertes **Machine Learning Modell** prüft die Texteingabe auf toxische Sprache
+  - Respektlose oder beleidigende Kommentare werden automatisch abgelehnt und nicht veröffentlicht
 
-- Search for a professor to visit their profile page (all professors of the FK07 are available + "Max Mustermann" for testing purposes)
-- View existing reviews for the selected professor from other students
-- Submit your own review and rating
-  - A machine learning model checks the text for toxicity - Toxic comments will be rejected and not published
+---
+
+### Automatischer E-Mail-Versand von Prüfungserinnerungen
+
+Beim Start der Anwendung sowie **täglich um 9 Uhr** prüft ein integrierter Scheduler automatisch, ob für einzelne Nutzer:innen eine Prüfung in genau 7 Tagen ansteht.
+
+- Wird eine solche Prüfung gefunden, erhalten die betroffenen Studierenden eine **automatische Erinnerungs-E-Mail** mit allen relevanten Informationen.
+- Diese Funktion erfordert keine manuelle Interaktion – sie läuft vollständig im Hintergrund.
+

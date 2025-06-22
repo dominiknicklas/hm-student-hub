@@ -24,7 +24,7 @@ def mock_lectures():
 def test_ics_generation_with_mocked_lectures(mock_lectures, mocker):
     # mock db call to return the mock lectures
     mocker.patch(
-        "student_hub.exporting.profile_storing.get_lectures_for_profile",
+        "student_hub.exporting.get_lectures_for_profile",
         return_value=mock_lectures
     )
 
