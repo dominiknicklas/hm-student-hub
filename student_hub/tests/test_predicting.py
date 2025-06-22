@@ -2,6 +2,7 @@ import pytest
 from student_hub.predicting import is_toxic
 
 def test_is_toxic_returns_true_if_score_above_threshold(mocker):
+    # Mock the models predict call to return a toxic score
     mocker.patch("student_hub.predicting.predict_toxicity", return_value={
         "toxic": 0.4,
         "severe_toxic": 0.1,
@@ -15,6 +16,7 @@ def test_is_toxic_returns_true_if_score_above_threshold(mocker):
 
 
 def test_is_toxic_returns_false_if_all_scores_below_threshold(mocker):
+    # Mock the models predict call to return a non toxic score
     mocker.patch("student_hub.predicting.predict_toxicity", return_value={
         "toxic": 0.2,
         "severe_toxic": 0.1,

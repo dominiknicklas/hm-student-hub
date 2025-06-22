@@ -10,7 +10,7 @@ def get_all_examtakers_for_exams_in_seven():
     Retrieves all exam takers for exams scheduled in seven days.
     
     Returns:
-        List of dictionaries containing exam taker information.
+        examtakers (list): List of dictionaries containing exam taker information.
     """
     exams = get_all_exams_in_seven_days()
     all_exam_takers = []

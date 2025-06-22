@@ -145,7 +145,8 @@ async def rate_professor(rating: Rating, email: str = Query(...)):
 @app.get("/rating")
 async def get_all_ratings_for_professor(prof_id: str = Query(...)):
     ratings = rating_storing.get_all_ratings_for_prof(prof_id)
-    average_stars = sum(d["stars"] for d in ratings) / len(ratings)
+    average_stars = None
+    if len(ratings) > 0: average_stars = sum(d["stars"] for d in ratings) / len(ratings)
     return {
         "averageStars": average_stars,
         "ratings": ratings

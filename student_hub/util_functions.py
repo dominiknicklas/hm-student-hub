@@ -6,10 +6,18 @@ from bs4 import BeautifulSoup
 
 def extract_data_from_transcript_text(text: str):
     """
-    Extracts total achieved ECTS, average grade and modules (which are already graded) from the transcript text (of the transcript pdf).
-    :param text: The text content of the transcript.
-    :return: A dictionary with a list of modules (dictionary with module title, grade and credits), ECTS total, and average grade.
+    Extracts total achieved ECTS, average grade and modules (which are already graded) from the transcript text (of the transcript PDF).
+
+    Args:
+        text (str): The text content of the transcript.
+
+    Returns:
+        transcript_content (dict): A dictionary containing:
+            - 'modules' (list[dict]): List of modules with 'module', 'grade', and 'ects'.
+            - 'ects_total' (str): The total achieved ECTS.
+            - 'average_grade' (str): The average grade.
     """
+
     modules = []
     ects_total = None
     average_grade = None
@@ -56,8 +64,17 @@ def extract_data_from_transcript_text(text: str):
 def extract_lectures_from_html(html: str):
     """
     Extracts lecture information from the HTML content of a course plan page.
-    :param html: The HTML content of the course plan page.
-    :return: A list of dictionaries containing lecture details such as weekday, time, title, format, and room.
+
+    Args:
+        html (str): The HTML content of the course plan page.
+
+    Returns:
+        lectures (list[dict]): A list of dictionaries containing lecture details with keys:
+            - 'weekday' (str): Day of the week.
+            - 'time' (str): Time of the lecture.
+            - 'title' (str): Title of the lecture.
+            - 'format' (str): Type of session (e.g., Vorlesung or Praktikum).
+            - 'room' (str): Room where the lecture takes place.
     """
     
     soup = BeautifulSoup(html, 'html.parser')
@@ -110,7 +127,7 @@ def extract_exam_date(date_str):
         date_str (str): The date string to extract from.
         
     Returns:
-        datetime: The extracted date in datetime format with timezone set to Europe/Berlin.
+        date (datetime): The extracted date in datetime format with timezone set to Europe/Berlin.
     """
     date_part = date_str.split('\n')[0] # Get the first part which is the date
     time_part = date_str.split('\n')[-1]  # Get the last part which is the time
@@ -133,7 +150,7 @@ def extract_suiting_exams_for_student(all_exams, email):
         email (str): The student's email to determine their study group.
         
     Returns:
-        list: List of exams that match the student's study group.
+        exams (list): List of exams that match the student's study group.
     """
     # Assuming profile_storing.get_study_group(email) returns the study group for the student
     study_group = get_study_group_for_profile(email)

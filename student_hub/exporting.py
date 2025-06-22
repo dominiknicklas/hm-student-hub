@@ -21,8 +21,12 @@ WINTER_SEMESTER_END = '01-31'
 def get_ics_file_for_user_timetable(email):
     """
     Generates an ICS calendar file for the student's timetable.
-    :param email: Student's email address to identify their profile and lectures.
-    :return: An ics.Calendar object containing the student's lectures recurring weekly till the semester end.
+
+    Args:
+        email (str): Student's email address to identify their profile and lectures.
+
+    Returns:
+        calender (ics.Calendar): A calendar object containing the student's lectures recurring weekly till the semester end.
     """
 
     # Retrieve lectures for the given profile
@@ -41,8 +45,11 @@ def get_ics_file_for_user_timetable(email):
 def get_next_semester_end():
     """
     Determines the end date of the current semester based on today's date.
-    :return: A date object representing the end of the current semester.
+
+    Returns:
+        semester_end (datetime.date): A date object representing the end of the current semester.
     """
+
     today = date.today()
     current_year = today.year
     month = today.month
@@ -61,9 +68,14 @@ def get_next_semester_end():
 def create_event_for_lecture(lecture): 
     """
     Creates an ICS event for a given lecture.
-    :param lecture: A dictionary containing lecture details like title, room, format, weekday, and time.
-    :return: An ics.Event object representing the lecture.
+
+    Args:
+        lecture (dict): A dictionary containing lecture details like title, room, format, weekday, and time.
+
+    Returns:
+        event (ics.Event): An object representing the lecture event.
     """
+
     today = datetime.today()
 
     # Get the corresponding weekday number to the lecture's weekday string

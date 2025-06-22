@@ -23,10 +23,16 @@ def load_model_and_vectorizer():
 
 def is_toxic(comment: str):
     """
-    Checks if a comment is toxic based on the model's predictions. If any predicted toxicity score exceeds 0.3, the comment is considered toxic.
-    :param comment: The comment to check.
-    :return: True if the comment is toxic, False otherwise.
+    Checks if a comment is toxic based on the model's predictions.
+    If any predicted toxicity score exceeds 0.3, the comment is considered toxic.
+
+    Args:
+        comment (str): The comment to check.
+
+    Returns:
+        result (bool): True if the comment is toxic, False otherwise.
     """
+
     toxicity_score = predict_toxicity(comment)
     for score in toxicity_score.values():
         if score > 0.3: return True
@@ -35,9 +41,15 @@ def is_toxic(comment: str):
 def predict_toxicity(input_data: str):
     """
     Predicts the toxicity of a given input comment using a pre-trained model.
-    :param input_data: The comment to analyze.
-    :return: A dictionary with predicted toxicity scores.
+
+    Args:
+        input_data (str): The comment to analyze.
+
+    Returns:
+        prediction (dict): A dictionary with predicted toxicity scores for categories such as
+            'toxic', 'severe_toxic', 'obscene', 'threat', 'insult', and 'identity_hate'.
     """
+
     global model, vectorizer
     if model is None or vectorizer is None:
         raise RuntimeError("Model and vectorizer must be loaded first using load_model_and_vectorizer()")

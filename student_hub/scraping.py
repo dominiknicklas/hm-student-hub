@@ -10,8 +10,11 @@ FK07_PROFESSOR_URL = "https://cs.hm.edu/fakultaet/personen/professuren.de.html"
 def scrape_all_study_groups():
     """
     Scrapes all available study groups from the course plan page of the ZPA.
-    :return: A list of dictionaries with 'value' and 'label' for each study group.
+
+    Returns:
+        study_groups (list[dict]): A list of dictionaries with 'value' and 'label' for each study group.
     """
+
     response = requests.get(ZPA_PUBLIC_URL + "course_plan/")
     if not response.ok:
         raise Exception(f"Failed to fetch page: {response.status_code}")
@@ -38,9 +41,14 @@ def scrape_all_study_groups():
 def scrape_course_plan_for_group(group_id: str):
     """
     Scrapes the course plan / timetable for a specific study group.
-    :param group_id: The unique identifier for the study group.
-    :return: A list of all lectures for the specified group."""
-    
+
+    Args:
+        group_id (str): The unique identifier for the study group.
+
+    Returns:
+        lectures (list[dict]): A list of all lectures for the specified group.
+    """
+
     # The timetable for each study group is loaded via a POST request, which is triggered when selecting a group from the dropdown on the course plan page (a form).
     # This POST request includes the selected study group ID and a CSRF token (which is embedded as a hidden input field in the HTML of the page)
     # Therefore, we must first send a GET request to the course plan page to retrieve the CSRF token, and then send a POST request containing both the group ID and the token.
@@ -82,8 +90,13 @@ def scrape_course_plan_for_group(group_id: str):
 def scrape_all_professors():
     """
     Scrapes all professors names and phone numbers (used as unique identifiers) from the FK07 professor page.
-    :return: A list of dictionaries with 'name' and 'phone' for each professor.
+
+    Returns:
+        professors (list[dict]): A list of dictionaries, each containing:
+            - name (str): The professor's full name.
+            - phone (str): The professor's phone number used as a unique identifier.
     """
+
     response = requests.get(FK07_PROFESSOR_URL)
     if not response.ok:
         raise Exception(f"Failed to fetch page: {response.status_code}")
@@ -133,13 +146,18 @@ def scrape_all_professors():
 
 
 def scrape_all_exams():
-    """ 
-    Scrapes all exams from the ZPA exam planning page.
-    :return: A list of dictionaries with exam details such as name, study groups, examiner, and date.
     """
-    session = requests.Session()
+    Scrapes all exams from the ZPA exam planning page.
 
-    response = session.get(ZPA_PUBLIC_URL + "exam_plan/")
+    Returns:
+        exams (list[dict]): A list of dictionaries containing exam details, including:
+            - examName (str): Name of the exam.
+            - studyGroups (str): Associated study groups.
+            - examiner (str): Name of the examiner.
+            - examDate (datetime): Scheduled date and time of the exam.
+    """
+
+    response = requests.get(ZPA_PUBLIC_URL + "exam_plan/")
     if not response.ok:
         raise Exception(f"Failed to fetch page: {response.status_code}")
 
