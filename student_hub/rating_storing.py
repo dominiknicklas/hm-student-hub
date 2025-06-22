@@ -1,5 +1,5 @@
 import sqlite3
-from datetime import datetime
+from student_hub.util_classes import Rating
 
 DB_NAME = "studenthub.db"
 
@@ -45,7 +45,7 @@ def insert_professor(id: str, prof_name: str, connection_provider=get_connection
         conn.commit()
 
 # Insert a rating for a professor by a student profile (as author).
-def insert_rating(email, rating, connection_provider=get_connection):
+def insert_rating(email: str, rating: Rating, connection_provider=get_connection):
     insert_professor(rating.profKey, rating.profName, connection_provider=connection_provider)
     with connection_provider() as conn:
         conn.execute("""

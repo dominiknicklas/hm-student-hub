@@ -45,8 +45,17 @@ const apiService = {
         return response.data
     },
 
-    createAccount: async (accountData: Registration) => {
-        await apiClient.post('/account', accountData)
+    createAccount: async (accountData: Registration, file: File) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        Object.entries(accountData).forEach(([key, value]) => {
+            formData.append(key, value);
+        });
+
+        await apiClient.post('/account', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }, withCredentials: true
+        });
     },
 
     login: async (accountData: {email: string, password: string}) => {

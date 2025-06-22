@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 from student_hub.util_functions import extract_exam_date, extract_lectures_from_html
+from student_hub.util_classes import Exam
 
 # Base URLs for scraping
 ZPA_PUBLIC_URL = "https://zpa.cs.hm.edu/public/"
@@ -150,7 +151,7 @@ def scrape_all_exams():
     Scrapes all exams from the ZPA exam planning page.
 
     Returns:
-        exams (list[dict]): A list of dictionaries containing exam details, including:
+        exams (list[Exam]): A list of Exams, including:
             - examName (str): Name of the exam.
             - studyGroups (str): Associated study groups.
             - examiner (str): Name of the examiner.
@@ -192,11 +193,6 @@ def scrape_all_exams():
             # Convert the exam date string to a datetime object
             extracted_date = extract_exam_date(exam_date)
 
-            exams.append({
-                    'examName': exam_name,
-                    'studyGroups': study_groups,
-                    'examiner': examiner,
-                    'examDate': extracted_date
-                })
+            exams.append(Exam(examName=exam_name, studyGroups=study_groups, examiner=examiner, examDate=extracted_date))
 
         return exams

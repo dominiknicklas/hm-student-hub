@@ -32,7 +32,8 @@ export default function Startup() {
     const navigate = useNavigate();
     const [loginErrorMessage, setLoginErrorMessage] = useState<string | null>(null)
     const [registrationErrorMessage, setRegistrationErrorMessage] = useState<string | null>(null)
-     const [transcriptError, setTranscriptError] = useState<boolean>(false)
+    const [transcriptError, setTranscriptError] = useState<boolean>(false)
+    const [transcriptUploadError, setTranscriptUploadError] = useState<boolean>(false)
 
     useEffect(() => {
         async function fetch() {
@@ -41,17 +42,6 @@ export default function Startup() {
         }
         fetch()
     }, []);
-
-    const handleUpload = async () => {
-        const file = registrationFormData.transcript
-        if (!file) return alert("Bitte PDF auswählen");
-
-        try {
-            await apiService.uploadTranscript(registrationFormData.email, file);
-        } catch (e) {
-            alert("Fehler beim Upload" + e);
-        }
-    };
 
     const getTimetable = async () => {
         const data = await apiService.getTimetable(registrationFormData.studyGroupId);
@@ -73,9 +63,11 @@ export default function Startup() {
         } else {
             setTranscriptError(false);
         }
+        setTranscriptUploadError(false)
+        setRegistrationErrorMessage("")
 
         try {
-            await apiService.createAccount(registration);
+            await apiService.createAccount(registration, registrationFormData.transcript);
             return true;
         } catch (e) {
             const error = e as AxiosError
@@ -83,14 +75,15 @@ export default function Startup() {
             if (error.response) {
                 const code = error.response.status;
                 if (code === 400) {
-                    message = "Es existiert bereits ein Account zu der Angegebenen E-Mail-Adresse"
+                    message = "Zu der angegebenen E-Mail-Adresse existiert bereits ein Account."
+                } else if (code ===422) {
+                    setTranscriptUploadError(true)
                 } else {
                     message = "Es lief etwas schief."
                 }
             }
             setRegistrationErrorMessage(message)
         }
-        await apiService.createAccount(registration);
     }
 
     const handleRegistrationSubmit = async(event: React.FormEvent) => {
@@ -133,7 +126,7 @@ export default function Startup() {
 
     const completeConfiguration = () => {
         localStorage.setItem('email', registrationFormData.email)
-        handleUpload()
+        //handleUpload()
         apiService.updateLectures(registrationFormData.email, lectures)
         navigate('/home')
     }
@@ -219,6 +212,7 @@ export default function Startup() {
                                 />
                             </Box>
                             {transcriptError && <Box gridColumn={{xs: "span 1", sm: "span 2"}}><Typography color="red">Bitte Notenblatt hochladen</Typography></Box>}
+                            {transcriptUploadError && <Box gridColumn={{xs: "span 1", sm: "span 2"}}><Typography color="red">Es scheint als wäre das hochgeladene Notenblatt kein offizielles Notenblatt aus dem Primuss Tool der HM!</Typography></Box>}
                             {/* Submit Button */}
                             <Box gridColumn={{xs: "span 1", sm: "span 2"}}>
                                 <Button type="submit" fullWidth variant="contained" color="primary">

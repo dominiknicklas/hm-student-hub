@@ -1,7 +1,8 @@
 import sqlite3
 from datetime import datetime, timedelta
 import bcrypt
-from zoneinfo import ZoneInfo
+from student_hub.util_classes import LoginData, Lecture, Exam
+from typing import List, Dict
 
 DB_NAME = "studenthub.db"
 
@@ -94,7 +95,7 @@ def initialize_db(connection_provider=get_connection):
 
 
 # Insert profile (Create Account)
-def insert_profile(firstname, lastname, email, password, study_group_id, study_group, average_grade, total_credits, connection_provider=get_connection):
+def insert_profile(firstname: str, lastname: str, email: str, password: str, study_group_id: str, study_group: str, average_grade: str, total_credits: str, connection_provider=get_connection):
     hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     with connection_provider() as conn:
         try: 
@@ -104,10 +105,15 @@ def insert_profile(firstname, lastname, email, password, study_group_id, study_g
             """, (firstname, lastname, email, hashed.decode('utf-8'), study_group_id, study_group, average_grade, total_credits))
             conn.commit()
         except sqlite3.IntegrityError as e:
-            raise ValueError(f"Es existiert bereits ein Account mit der E-Mail-Adresse: {email}")    
+            raise ValueError(f"There is already an account registered with the following email: {email}")    
 
+# Delete Student Account
+def delete_profile(email: str, connection_provider=get_connection):
+    with connection_provider() as conn:
+        conn.execute("DELETE FROM profiles WHERE email = ?", (email,))
+    
 # Check login credentials
-def check_login_data(login_data, connection_provider=get_connection):
+def check_login_data(login_data: LoginData, connection_provider=get_connection):
     with connection_provider() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT password FROM profiles WHERE email = ?", (login_data.email,))
@@ -118,7 +124,7 @@ def check_login_data(login_data, connection_provider=get_connection):
         return False
 
 # Insert all grades from the transcript for a student -> clear existing grades first
-def update_grades(email, modules, connection_provider=get_connection):
+def update_grades(email: str, modules: List[Dict], connection_provider=get_connection):
     clear_grades(email, connection_provider)
     with connection_provider() as conn:
         for module in modules:
@@ -129,20 +135,20 @@ def update_grades(email, modules, connection_provider=get_connection):
         conn.commit()
 
 # Update study progress (average grade and total credits) of a student profile
-def update_study_progress(email, avg, total, connection_provider=get_connection):
+def update_study_progress(email: str, avg: str, total: str, connection_provider=get_connection):
     with connection_provider() as conn:
         conn.execute("UPDATE profiles SET average_grade = ?, total_credits = ? WHERE email = ?", (avg, total, email))
         conn.commit()
 
 # Update study group of a student profile
-def update_study_group(email, new_group_id, new_group, connection_provider=get_connection):
+def update_study_group(email: str, new_group_id: str, new_group: str, connection_provider=get_connection):
     with connection_provider() as conn:
         conn.execute("UPDATE profiles SET study_group_id = ? WHERE email = ?", (new_group_id, email))
         conn.execute("UPDATE profiles SET study_group = ? WHERE email = ?", (new_group, email))
         conn.commit()
 
 # Insert lectures if they are not already present and link them to the student's profile -> clear existing lectures for the student first
-def update_timetable(email, lectures, connection_provider=get_connection):
+def update_timetable(email: str, lectures: List[Lecture], connection_provider=get_connection):
     clear_timetable(email, connection_provider)
     with connection_provider() as conn:
         for lec in lectures:
@@ -157,7 +163,7 @@ def update_timetable(email, lectures, connection_provider=get_connection):
         conn.commit()
 
 # Insert exams if they are not already present and link them to the student's profile -> clear existing exams for the student first
-def update_exams(email, exams, connection_provider=get_connection):
+def update_exams(email: str, exams: List[Exam], connection_provider=get_connection):
     clear_exams(email, connection_provider)
     with connection_provider() as conn:
         for exam in exams:
@@ -172,7 +178,7 @@ def update_exams(email, exams, connection_provider=get_connection):
         conn.commit()
 
 # Retrieve all lectures attended by a specific student profile
-def get_lectures_for_profile(email, connection_provider=get_connection):
+def get_lectures_for_profile(email: str, connection_provider=get_connection):
     with connection_provider() as conn:
         cursor = conn.cursor()
         cursor.execute("""
@@ -192,14 +198,14 @@ def get_lectures_for_profile(email, connection_provider=get_connection):
         ]
 
 # Get graded modules for a specific student profile
-def get_modules_for_profile(email, connection_provider=get_connection):
+def get_modules_for_profile(email: str, connection_provider=get_connection):
     with connection_provider() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT module, grade, credits FROM modules WHERE email = ?", (email,))
         return [{'module': m, 'grade': g, 'ects': str(e)} for m, g, e in cursor.fetchall()]
 
 # Get general profile information for a specific student profile
-def get_profile_summary(email, connection_provider=get_connection):
+def get_profile_summary(email: str, connection_provider=get_connection):
     with connection_provider() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT firstname, average_grade, total_credits FROM profiles WHERE email = ?", (email,))
@@ -213,7 +219,7 @@ def get_profile_summary(email, connection_provider=get_connection):
         return None
 
 # Get all exams for a specific student profile
-def get_exams_for_profile(email, connection_provider=get_connection):
+def get_exams_for_profile(email: str, connection_provider=get_connection):
     with connection_provider() as conn:
         cursor = conn.cursor()
         cursor.execute("""
@@ -232,7 +238,7 @@ def get_exams_for_profile(email, connection_provider=get_connection):
         ]
 
 # Get the study group for a specific student profile
-def get_study_group_for_profile(email, connection_provider=get_connection):
+def get_study_group_for_profile(email: str, connection_provider=get_connection):
     with connection_provider() as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT study_group FROM profiles WHERE email = ?", (email,))
@@ -242,19 +248,19 @@ def get_study_group_for_profile(email, connection_provider=get_connection):
         return None
 
 # Clear student-specific grades (modules) to replace them with new ones
-def clear_grades(email, connection_provider=get_connection):
+def clear_grades(email: str, connection_provider=get_connection):
     with connection_provider() as conn:
         conn.execute("DELETE FROM modules WHERE email = ?", (email,))
         conn.commit()
 
 # Clear student-specific lecture links to replace them with new ones
-def clear_timetable(email, connection_provider=get_connection):
+def clear_timetable(email: str, connection_provider=get_connection):
     with connection_provider() as conn:
         conn.execute("DELETE FROM profile_lecture WHERE email = ?", (email,))
         conn.commit()
 
 # Clear student-specific exam links to replace them with new ones
-def clear_exams(email, connection_provider=get_connection):
+def clear_exams(email: str, connection_provider=get_connection):
     with connection_provider() as conn:
         conn.execute("DELETE FROM profile_exam WHERE email = ?", (email,))
         conn.commit()
@@ -276,7 +282,7 @@ def get_all_exams_in_seven_days(connection_provider=get_connection):
         ]
     
 # Retrieves all exam takers (firstname, lastname, email) for a specific exam.
-def get_all_exam_takers_for_specific_exam(examiner, exam_date, connection_provider=get_connection):
+def get_all_exam_takers_for_specific_exam(examiner: str, exam_date: datetime, connection_provider=get_connection):
     with connection_provider() as conn:
         cursor = conn.cursor()
         cursor.execute("""

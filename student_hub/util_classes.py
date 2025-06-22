@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from typing import List, Optional, Union
+from typing import Optional
 from datetime import datetime
 
 # this data models are used in the FastAPI endpoints and represent the data which is sent by the frontend

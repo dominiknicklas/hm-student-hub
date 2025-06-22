@@ -1,7 +1,5 @@
 # 🎓 Student Hub FK07
 
-## 🔍 Ziel der Anwendung
-
 **Student Hub FK07** ist ein webbasiertes Informationssystem für Studierende der Fakultät für Informatik und Mathematik (FK07) an der Hochschule München.  
 Ziel ist es, alle studienrelevanten Informationen zentral und übersichtlich bereitzustellen sowie den Studierenden die Möglichkeit zu bieten, eigene Erfahrungen mit Professor:innen öffentlich zu teilen.
 Im Gegensatz zur derzeit ausschließlich intern zugänglichen Evaluation sind diese Bewertungen für alle Studierenden einsehbar.
@@ -56,6 +54,20 @@ npm install
 npm run dev
 ```
 
+### ✅ Tests
+
+Für alle Module (mit Ausnahme von `main.py`) wurden umfangreiche Tests entwickelt, die im Verzeichnis `/tests` zu finden sind.  
+Zur Durchführung der Tests wird das Framework **pytest** verwendet.
+
+Die Tests lassen sich bequem im **Projekt-Root-Verzeichnis** mit folgendem Befehl ausführen:
+
+```bash
+pytest
+
+# Optional kann zusätzlich die Testabdeckung (Coverage) angezeigt werden:
+pytest --cov=student_hub --cov-report=term-missing
+```
+
 ---
 
 ## 🖥️ Nutzung der Anwendung
@@ -89,6 +101,7 @@ npm run dev
 - Eigene Bewertungen können abgegeben werden
   - Ein selbst trainiertes **Machine Learning Modell** prüft die Texteingabe auf toxische Sprache
   - Respektlose oder beleidigende Kommentare werden automatisch abgelehnt und nicht veröffentlicht
+  - Zum Trainieren des ML Models wurde [folgender Datensatz von Kaggle](https://www.kaggle.com/datasets/shubheshswain/jigsaw-toxic-comment-classification-german) verwendet
 
 ---
 

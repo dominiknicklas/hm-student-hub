@@ -2,18 +2,18 @@ from fastapi import FastAPI, Query, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import status
 from fastapi.responses import StreamingResponse
-import pdfplumber
 import io
 import student_hub.scraping as scraping
 import student_hub.profile_storing as profile_storing
 import student_hub.rating_storing as rating_storing
 from student_hub.util_classes import *
-from student_hub.util_functions import extract_data_from_transcript_text, extract_suiting_exams_for_student
+from student_hub.util_functions import parse_pdf_and_save_to_profile, extract_suiting_exams_for_student
 from student_hub.predicting import is_toxic, load_model_and_vectorizer
 from student_hub.exporting import get_ics_file_for_user_timetable
 from student_hub.mailing import find_and_send_exam_reminders
 from contextlib import asynccontextmanager
 from apscheduler.schedulers.background import BackgroundScheduler
+from typing import List
 
 scheduler = BackgroundScheduler()
 
@@ -48,10 +48,26 @@ app.add_middleware(
 )
 
 # Defined endpoints:
+from fastapi import Form
+
 @app.post("/account")
-async def create_account(registration: Registration):
+async def create_account(
+    firstName: str = Form(...),
+    lastName: str = Form(...),
+    email: EmailStr = Form(...),
+    password: str = Form(...),
+    studyGroupId: str = Form(...),
+    studyGroup: str = Form(...),
+    file: UploadFile = File(...)
+):
     try:
-        profile_storing.insert_profile(registration.firstName, registration.lastName, registration.email, registration.password, registration.studyGroupId, registration.studyGroup, '', '')
+        profile_storing.insert_profile(firstName, lastName, email, password, studyGroupId, studyGroup, '', '')
+        try:
+            content = await file.read()
+            parse_pdf_and_save_to_profile(content, email)
+        except ValueError as e:
+            profile_storing.delete_profile(email)
+            raise HTTPException(status_code=422, detail=str(e))
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     
@@ -98,13 +114,10 @@ async def upload_transcript(email: str = Query(...), file: UploadFile = File(...
         raise HTTPException(status_code=400, detail="Only PDF files are allowed.")
 
     content = await file.read()
-
-    with pdfplumber.open(io.BytesIO(content)) as pdf:
-        text = "\n".join(page.extract_text() for page in pdf.pages if page.extract_text())
-
-    transcript_information = extract_data_from_transcript_text(text)
-    profile_storing.update_study_progress(email, transcript_information["average_grade"], transcript_information["ects_total"])
-    profile_storing.update_grades(email, transcript_information["modules"])
+    try:
+        parse_pdf_and_save_to_profile(content, email)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="The uploaded pdf seems to be not a valid transcript")
 
 @app.post("/exams")
 async def update_exams_for_student(exams: List[Exam], email: str = Query(...)):

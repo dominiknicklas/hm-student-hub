@@ -1,8 +1,31 @@
 import re
 from datetime import datetime
 import zoneinfo
-from student_hub.profile_storing import get_study_group_for_profile
+from student_hub.profile_storing import get_study_group_for_profile, update_grades, update_study_progress
 from bs4 import BeautifulSoup
+import pdfplumber
+import io
+from typing import List
+from student_hub.util_classes import Exam
+
+def parse_pdf_and_save_to_profile(content: bytes, email: str):
+    """
+    Extracts total achieved ECTS, average grade and modules from the uploaded transcript and stores them to the profile of the given email.
+
+    Args:
+        email (str): The profile of the student who uploaded the transcript.
+    """
+    with pdfplumber.open(io.BytesIO(content)) as pdf:
+        text = "\n".join(page.extract_text() for page in pdf.pages if page.extract_text())
+
+    try:
+        transcript_information = extract_data_from_transcript_text(text)
+    except ValueError:
+        raise # raise error to main -> http handling
+    
+    update_study_progress(email, transcript_information["average_grade"], transcript_information["ects_total"])
+    update_grades(email, transcript_information["modules"])
+
 
 def extract_data_from_transcript_text(text: str):
     """
@@ -54,6 +77,9 @@ def extract_data_from_transcript_text(text: str):
             if avg:
                 average_grade = avg.group(1).replace(",", ".")
 
+    if average_grade is None or ects_total is None:
+        raise ValueError("Missing value: average grade or total ECTS not found in the PDF. - The uploaded Transcript appears to be not valid")
+    
     return {
         "modules": modules,
         "ects_total": ects_total,
@@ -119,7 +145,7 @@ def extract_lectures_from_html(html: str):
     return timetable
 
 
-def extract_exam_date(date_str):
+def extract_exam_date(date_str: str):
     """
     Extracts the date from a string formatted as 'DD.MM.YYYY \n HH:MM'.
     
@@ -141,16 +167,16 @@ def extract_exam_date(date_str):
 
     return dt_berlin
 
-def extract_suiting_exams_for_student(all_exams, email):
+def extract_suiting_exams_for_student(all_exams: List[Exam], email: str):
     """
     Extracts exams that match the student's study group from the list of all exams.
     
     Args:
-        all_exams (list): List of all exams.
+        all_exams (List): List of all exams.
         email (str): The student's email to determine their study group.
         
     Returns:
-        exams (list): List of exams that match the student's study group.
+        exams (List[Exam]): List of exams that match the student's study group.
     """
     # Assuming profile_storing.get_study_group(email) returns the study group for the student
     study_group = get_study_group_for_profile(email)
@@ -158,4 +184,4 @@ def extract_suiting_exams_for_student(all_exams, email):
         return []
 
     # Filter exams based on the student's study group
-    return [exam for exam in all_exams if study_group in exam['studyGroups']]
+    return [exam for exam in all_exams if study_group in exam.studyGroups]

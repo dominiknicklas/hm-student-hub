@@ -1,10 +1,10 @@
 from student_hub.profile_storing import get_all_exam_takers_for_specific_exam, get_all_exams_in_seven_days
-from datetime import datetime
 import smtplib
 import ssl
 import certifi
 from email.message import EmailMessage
 from email.utils import formataddr
+from typing import Dict
 
 def get_all_examtakers_for_exams_in_seven():
     """
@@ -28,7 +28,7 @@ def get_all_examtakers_for_exams_in_seven():
     
     return all_exam_takers
 
-def send_exam_reminder_email(exam_taker_info):
+def send_exam_reminder_email(exam_taker_info: Dict):
     """
     Sends an email reminder to an exam taker about their upcoming exam.
     

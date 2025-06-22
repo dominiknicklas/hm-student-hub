@@ -4,6 +4,7 @@ from datetime import date
 from datetime import datetime, timedelta
 import arrow
 from student_hub.profile_storing import get_lectures_for_profile
+from student_hub.util_classes import Lecture
 
 # Map weekday string to weekday number
 weekday_map = {
@@ -18,7 +19,7 @@ weekday_map = {
 SUMMER_SEMESTER_END = '07-31'
 WINTER_SEMESTER_END = '01-31'
 
-def get_ics_file_for_user_timetable(email):
+def get_ics_file_for_user_timetable(email: str):
     """
     Generates an ICS calendar file for the student's timetable.
 
@@ -65,7 +66,7 @@ def get_next_semester_end():
         return date.fromisoformat(f"{current_year}-{WINTER_SEMESTER_END}")
 
 
-def create_event_for_lecture(lecture): 
+def create_event_for_lecture(lecture: Lecture): 
     """
     Creates an ICS event for a given lecture.
 
