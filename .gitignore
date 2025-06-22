@@ -1,0 +1,29 @@
+# Python cache files (main code and tests)
+student_hub/__pycache__/
+tests/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# PyCharm project files
+.idea/
+
+# npm/node modules (frontend)
+student_hub_frontend/node_modules/
+student_hub_frontend/.idea
+
+# Test output (Python)
+tests/.pytest_cache/
+student_hub/.pytest_cache/
+*.pytest_cache/
+test-results/
+coverage/
+*.cover
+*.coverage
+.cache/
+
+# Misc
+.DS_Store
+.env
+*.env
+*.log
