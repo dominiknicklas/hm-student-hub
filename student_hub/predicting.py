@@ -5,7 +5,7 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "models", "toxicity.keras")
-VECTORIZER_PATH = os.path.join(BASE_DIR, "models", "vectorizer.pkl")
+VECTORIZER_PATH = os.path.join(BASE_DIR, "models", "vectorizer.keras")
 
 vectorizer = None
 model = None
@@ -17,8 +17,9 @@ def load_model_and_vectorizer():
     model = tf.keras.models.load_model(MODEL_PATH)
 
     # Loads the pre-trained vectorizer (automatically when this module is imported)
-    with open(VECTORIZER_PATH, 'rb') as f:
-        vectorizer = pickle.load(f)
+    vectorizer = tf.keras.models.load_model(VECTORIZER_PATH)
+    #with open(VECTORIZER_PATH, 'rb') as f:
+    #    vectorizer = pickle.load(f)
 
 
 def is_toxic(comment: str):

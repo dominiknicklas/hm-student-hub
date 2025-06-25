@@ -15,10 +15,12 @@ def parse_pdf_and_save_to_profile(content: bytes, email: str):
     Args:
         email (str): The profile of the student who uploaded the transcript.
     """
+    # Extract all readable text from a PDF and summarize it in a string.
     with pdfplumber.open(io.BytesIO(content)) as pdf:
         text = "\n".join(page.extract_text() for page in pdf.pages if page.extract_text())
 
     try:
+        # Extract the relevant data from the transcript text
         transcript_information = extract_data_from_transcript_text(text)
     except ValueError:
         raise # raise error to main -> http handling

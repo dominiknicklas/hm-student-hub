@@ -85,7 +85,6 @@ async def get_account_information(email: str = Query(...)):
 
 @app.post("/login")
 async def login(loginData: LoginData):
-    profile_storing.check_login_data(loginData)
     if profile_storing.check_login_data(loginData):
         return {"message": "Login successful"}
     raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
