@@ -14,3 +14,5 @@ pydantic[email]
 certifi
 python-multipart
 apscheduler
+scikit-learn
+matplotlib

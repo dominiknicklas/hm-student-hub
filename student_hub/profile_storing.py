@@ -267,11 +267,11 @@ def clear_exams(email: str, connection_provider=get_connection):
 
 # Retrieves all exams scheduled for tomorrow.
 def get_all_exams_in_seven_days(connection_provider=get_connection):
-    tomorrow = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d")
+    in_seven = (datetime.now() + timedelta(days=7)).strftime("%Y-%m-%d")
     with connection_provider() as conn:
         cursor = conn.cursor()
         # exam_date LIKE '2025-06-14%' findes every exam on the 14th of June 2025, regardless of the time
-        cursor.execute("SELECT * FROM exams WHERE exam_date LIKE ?", (f"{tomorrow}%",))
+        cursor.execute("SELECT * FROM exams WHERE exam_date LIKE ?", (f"{in_seven}%",))
         return [
             {
                 'examName': row[0],
