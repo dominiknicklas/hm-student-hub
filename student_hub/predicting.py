@@ -36,7 +36,7 @@ def is_toxic(comment: str):
 
     toxicity_score = predict_toxicity(comment)
     for score in toxicity_score.values():
-        if score > 0.3: return True
+        if score > 0.4: return True
     return False
 
 def predict_toxicity(input_data: str):

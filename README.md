@@ -22,14 +22,14 @@ Die Anwendung basiert auf einem **React + TypeScript Frontend** und einem **Fast
 
 ## 🚀 Starten der Anwendung
 
-### ⚙️ Voraussetzungen
+### Voraussetzungen
 
 - `npm` und `Python` müssen auf dem System installiert sein  
-  - Empfohlen wird **Python 3.12**, da neuere Versionen unter Umständen nicht mit TensorFlow kompatibel sind.
+  - Empfohlen wird **Python 3.11**, da neuere Versionen unter Umständen nicht mit TensorFlow kompatibel sind.
 
-- Das **ML-Modell für die Bewertungstexte** wird **nicht mitgeliefert**, da es zu groß ist.  
-  → Vor dem Start der Anwendung muss das Modell eigenständig trainiert und gespeichert werden.  
+- Das **ML-Modell für die Bewertungstexte** wird **nicht mitgeliefert**, da es zu groß ist. -> Vor dem Start der Anwendung muss das ML Modell sowie der TextVectorizer eigenständig trainiert und gespeichert werden.  
   Dafür ist das **Jupyter-Notebook** unter `/student_hub/model_training` von oben bis unten einmal vollständig auszuführen.
+  Hierfür muss [folgender Datensatz von Kaggle](https://www.kaggle.com/datasets/shubheshswain/jigsaw-toxic-comment-classification-german) heruntergeladen werden und in dem selben Ordner wie das Notebook zu speichern.
 
 - *(Optional)*: Der **E-Mail-Versand** ist standardmäßig deaktiviert, um keine privaten Zugangsdaten in der Anwendung zu speichern.  
   Statt einer tatsächlichen E-Mail wird der Inhalt lediglich in der Konsole ausgegeben.  
@@ -54,7 +54,7 @@ npm install
 npm run dev
 ```
 
-### ✅ Tests
+### Tests
 
 Für alle Module (mit Ausnahme von `main.py`) wurden umfangreiche Tests entwickelt, die im Verzeichnis `/tests` zu finden sind.  
 Zur Durchführung der Tests wird das Framework **pytest** verwendet.
@@ -70,7 +70,7 @@ pytest --cov=student_hub --cov-report=term-missing
 
 ---
 
-## 🖥️ Nutzung der Anwendung
+## Nutzung der Anwendung
 
 ### Zugriff auf die Anwendung
 
@@ -101,7 +101,6 @@ pytest --cov=student_hub --cov-report=term-missing
 - Eigene Bewertungen können abgegeben werden
   - Ein selbst trainiertes **Machine Learning Modell** prüft die Texteingabe auf toxische Sprache
   - Respektlose oder beleidigende Kommentare werden automatisch abgelehnt und nicht veröffentlicht
-  - Zum Trainieren des ML Models wurde [folgender Datensatz von Kaggle](https://www.kaggle.com/datasets/shubheshswain/jigsaw-toxic-comment-classification-german) verwendet
 
 ---
 

@@ -135,7 +135,7 @@ export default function Startup() {
         <Box sx={{ display: "flex", flexDirection: "column", minHeight: '100vh' }}>
             <Navbar/>
             <Toolbar/>
-            <Typography variant="h3" textAlign="center" sx={{marginTop: "40px"}}>Willkommen beim Studentenhub</Typography>
+            <Typography variant="h3" textAlign="center" sx={{marginTop: "40px"}}>Willkommen beim StudentHub</Typography>
             {!secondPage && <Container sx={{marginTop: "40px"}}>
                 <Box
                     display="flex"

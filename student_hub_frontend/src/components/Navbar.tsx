@@ -63,7 +63,7 @@ export default function Navbar({ handleTranscriptUpdate, handleStudyGroupUpdate 
                                     }
                                 }}
                             >
-                                - Studentenhub FK07
+                                - StudentHub FK07
                             </Typography>
                         </Box>
 
