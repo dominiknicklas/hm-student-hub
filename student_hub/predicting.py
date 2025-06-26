@@ -18,14 +18,12 @@ def load_model_and_vectorizer():
 
     # Loads the pre-trained vectorizer (automatically when this module is imported)
     vectorizer = tf.keras.models.load_model(VECTORIZER_PATH)
-    #with open(VECTORIZER_PATH, 'rb') as f:
-    #    vectorizer = pickle.load(f)
 
 
 def is_toxic(comment: str):
     """
     Checks if a comment is toxic based on the model's predictions.
-    If any predicted toxicity score exceeds 0.3, the comment is considered toxic.
+    If any predicted toxicity score exceeds 0.4, the comment is considered toxic.
 
     Args:
         comment (str): The comment to check.
@@ -47,8 +45,8 @@ def predict_toxicity(input_data: str):
         input_data (str): The comment to analyze.
 
     Returns:
-        prediction (dict): A dictionary with predicted toxicity scores for categories such as
-            'toxic', 'severe_toxic', 'obscene', 'threat', 'insult', and 'identity_hate'.
+        prediction (dict): A dictionary with predicted toxicity scores for the following categories:
+            'toxic', 'severe_toxic', 'obscene', 'threat', 'insult', 'identity_hate'.
     """
 
     global model, vectorizer
