@@ -15,3 +15,5 @@ certifi
 python-multipart
 apscheduler
 matplotlib
+pytest
+pytest-mock

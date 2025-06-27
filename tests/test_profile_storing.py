@@ -63,7 +63,7 @@ def test_duplicate_profile_insertion_raises(connection_provider):
     with pytest.raises(ValueError) as e:
         profile_storing.insert_profile(**TEST_USER, connection_provider=connection_provider)
 
-    assert "Es existiert bereits ein Account mit der E-Mail-Adresse: max@example.com" in str(e.value)
+    assert "There is already an account registered with the following email: max@example.com" in str(e.value)
 
 
 def test_update_and_read_modules(connection_provider):

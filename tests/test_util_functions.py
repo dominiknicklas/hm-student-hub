@@ -1,5 +1,6 @@
 import pytest
 from student_hub.util_functions import extract_data_from_transcript_text, extract_lectures_from_html, extract_exam_date, extract_suiting_exams_for_student
+from student_hub.util_classes import Exam
 
 def test_extract_data_from_transcript_text():
     # Fake transcript text for testing
@@ -64,8 +65,8 @@ def test_extract_exam_date():
 
 def test_extract_suiting_exams_for_student(mocker):
     exams = [
-        {'examName': 'Datenmanagement', 'studyGroups': 'WT4A WT4B'},
-        {'examName': 'Wirtschaftsmathe 2', 'studyGroups': 'WT2'},
+        Exam(examName='Datenmanagement', studyGroups='WT4A WT4B', examiner='Prof. Dr. Tester', examDate='2025-07-21T16:00:00'),
+        Exam(examName='Wirtschaftsmathe 2', studyGroups='WT2', examiner='Prof. Dr. Max', examDate='2025-07-18T16:00:00')
     ]
 
     # Mock the get_study_group_for_profile function to return a specific study group for the test
@@ -74,4 +75,4 @@ def test_extract_suiting_exams_for_student(mocker):
     # Call the function to extract exams for a student with a specific email - this should return only the exams that match the study group
     result = extract_suiting_exams_for_student(exams, "max@example.com")
     assert len(result) == 1
-    assert result[0]["examName"] == "Datenmanagement"
+    assert result[0].examName == "Datenmanagement"

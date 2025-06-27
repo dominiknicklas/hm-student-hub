@@ -1,6 +1,7 @@
 import pytest
 from bs4 import BeautifulSoup
 from student_hub.scraping import scrape_all_study_groups, scrape_all_professors, scrape_course_plan_for_group, scrape_all_exams
+from student_hub.util_classes import Exam
 
 def test_scrape_all_study_groups(mocker):
     # Fake ZPA HTML snippet with study groups
@@ -124,12 +125,7 @@ def test_scrape_all_exams(mocker):
 
     # Call the function under test and check the result - should return the exam of the HTML
     result = scrape_all_exams()
-    assert result == [{
-        'examName': 'Algorithmen und Datenstrukturen',
-        'studyGroups': 'WT4A',
-        'examiner': 'Prof. Dr. Test (FK07)',
-        'examDate': '2025-07-21T16:00:00'
-    }]
+    assert result == [Exam(examName='Algorithmen und Datenstrukturen', studyGroups='WT4A', examiner='Prof. Dr. Test (FK07)', examDate='2025-07-21T16:00:00')]
 
 
 def test_scrape_all_exams_when_planning_not_finished(mocker):
